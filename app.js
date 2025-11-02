@@ -94,17 +94,24 @@ const state = {
   allowAnswer: true,
   current: null,
   nextTimeout: null,
+  sessionStart: null,
+  scoreboardInterval: null,
 };
 
 const elements = {};
 
 function init() {
   cacheElements();
+  state.sessionStart = performance.now();
   updateScoreboard();
   setupStaffCards();
   setupStaffSvgs();
   renderAnswerButtons();
   bindEvents();
+  if (state.scoreboardInterval) {
+    window.clearInterval(state.scoreboardInterval);
+  }
+  state.scoreboardInterval = window.setInterval(updateScoreboard, 1000);
   nextQuestion();
 }
 
@@ -113,6 +120,9 @@ function cacheElements() {
   elements.scoreCorrect = document.getElementById("scoreCorrect");
   elements.scoreTotal = document.getElementById("scoreTotal");
   elements.scoreAccuracy = document.getElementById("scoreAccuracy");
+  elements.scoreGuessesPerMinute = document.getElementById(
+    "scoreGuessesPerMinute"
+  );
   elements.scoreStreak = document.getElementById("scoreStreak");
   elements.answerButtons = document.getElementById("answerButtons");
   elements.nextButton = document.getElementById("nextButton");
@@ -385,6 +395,19 @@ function updateScoreboard() {
   const accuracy =
     state.total > 0 ? Math.round((state.correct / state.total) * 100) : null;
   elements.scoreAccuracy.textContent = accuracy === null ? "N/A" : `${accuracy}%`;
+  if (elements.scoreGuessesPerMinute) {
+    let guessesPerMinuteText = "0.0";
+    if (state.sessionStart !== null) {
+      const elapsedMinutes = (performance.now() - state.sessionStart) / 60000;
+      if (state.correct > 0 && elapsedMinutes > 0) {
+        const rate = state.correct / elapsedMinutes;
+        guessesPerMinuteText = rate >= 10 ? rate.toFixed(0) : rate.toFixed(1);
+      }
+    } else {
+      guessesPerMinuteText = "N/A";
+    }
+    elements.scoreGuessesPerMinute.textContent = guessesPerMinuteText;
+  }
 }
 
 function setNeutralFeedback(message) {

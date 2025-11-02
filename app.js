@@ -4,6 +4,16 @@ const KEY_ALIASES = {
   H: "B",
 };
 const VALID_KEYS = new Set(NOTE_LETTERS);
+const NOTE_RANGES = {
+  standard: {
+    treble: { min: -2, max: 10 },
+    bass: { min: -2, max: 10 },
+  },
+  advanced: {
+    treble: { min: -6, max: 14 },
+    bass: { min: -6, max: 14 },
+  },
+};
 
 const STAFF_CONFIG = {
   treble: {
@@ -34,43 +44,6 @@ Object.values(STAFF_CONFIG).forEach((config) => {
   config.stepSpacing = config.lineSpacing / 2;
 });
 
-const TREBLE_NOTES = [
-  "C4",
-  "D4",
-  "E4",
-  "F4",
-  "G4",
-  "A4",
-  "B4",
-  "C5",
-  "D5",
-  "E5",
-  "F5",
-  "G5",
-  "A5",
-];
-
-const BASS_NOTES = [
-  "E2",
-  "F2",
-  "G2",
-  "A2",
-  "B2",
-  "C3",
-  "D3",
-  "E3",
-  "F3",
-  "G3",
-  "A3",
-  "B3",
-  "C4",
-];
-
-const NOTE_BANK = [
-  ...TREBLE_NOTES.map((id) => createNote(id, "treble")),
-  ...BASS_NOTES.map((id) => createNote(id, "bass")),
-];
-
 const CLEF_SYMBOLS = {
   treble: {
     glyph: String.fromCodePoint(0x1d11e),
@@ -99,6 +72,8 @@ const state = {
   nextTimeout: null,
   sessionStart: null,
   scoreboardInterval: null,
+  advancedMode: false,
+  notePool: [],
 };
 
 const elements = {};
@@ -109,6 +84,7 @@ function init() {
   updateScoreboard();
   setupStaffCards();
   setupStaffSvgs();
+  updateNotePool();
   renderAnswerButtons();
   bindEvents();
   if (state.scoreboardInterval) {
@@ -129,6 +105,10 @@ function cacheElements() {
   elements.scoreStreak = document.getElementById("scoreStreak");
   elements.answerButtons = document.getElementById("answerButtons");
   elements.nextButton = document.getElementById("nextButton");
+  elements.advancedToggle = document.getElementById("advancedModeToggle");
+  if (elements.advancedToggle) {
+    elements.advancedToggle.checked = state.advancedMode;
+  }
 }
 
 function setupStaffCards() {
@@ -218,6 +198,21 @@ function bindEvents() {
     state.allowAnswer = true;
     nextQuestion();
   });
+  if (elements.advancedToggle) {
+    elements.advancedToggle.addEventListener("change", handleAdvancedToggle);
+  }
+}
+
+function handleAdvancedToggle(event) {
+  state.advancedMode = event.target.checked;
+  updateNotePool();
+  cancelScheduledQuestion();
+  state.allowAnswer = true;
+  nextQuestion();
+}
+
+function updateNotePool() {
+  state.notePool = buildNotePool(state.advancedMode);
 }
 
 function handleKeydown(event) {
@@ -320,8 +315,38 @@ function cancelScheduledQuestion() {
 }
 
 function pickRandomNote() {
-  const index = Math.floor(Math.random() * NOTE_BANK.length);
-  return NOTE_BANK[index];
+  if (!state.notePool || state.notePool.length === 0) {
+    updateNotePool();
+  }
+  const index = Math.floor(Math.random() * state.notePool.length);
+  return state.notePool[index];
+}
+
+function buildNotePool(useAdvanced) {
+  const rangeKey = useAdvanced ? "advanced" : "standard";
+  const ranges = NOTE_RANGES[rangeKey];
+  const pool = [];
+
+  Object.keys(STAFF_CONFIG).forEach((staffKey) => {
+    const staffConfig = STAFF_CONFIG[staffKey];
+    const staffRange = ranges[staffKey];
+    if (!staffConfig || !staffRange) {
+      return;
+    }
+
+    for (let step = staffRange.min; step <= staffRange.max; step += 1) {
+      const pitch = shiftPitch(staffConfig.bottomNote, step);
+      pool.push({
+        id: `${pitch.letter}${pitch.octave}`,
+        staff: staffKey,
+        letter: pitch.letter,
+        octave: pitch.octave,
+        note: pitch,
+      });
+    }
+  });
+
+  return pool;
 }
 
 function updateStaffNote(staffKey, note) {
@@ -436,6 +461,22 @@ function setFeedback(message, tone = "neutral") {
   }
 }
 
+function shiftPitch(base, stepOffset) {
+  const baseIndex = NOTE_LETTERS.indexOf(base.letter);
+  if (baseIndex === -1) {
+    throw new Error(`Unknown base letter: ${base.letter}`);
+  }
+
+  const totalSteps = baseIndex + stepOffset;
+  const letterIndex =
+    ((totalSteps % NOTE_LETTERS.length) + NOTE_LETTERS.length) %
+    NOTE_LETTERS.length;
+  const octaveOffset = Math.floor(totalSteps / NOTE_LETTERS.length);
+  const octave = base.octave + octaveOffset;
+
+  return createPitch(NOTE_LETTERS[letterIndex], octave);
+}
+
 function computeStepOffset(note, reference) {
   const letterDiff =
     NOTE_LETTERS.indexOf(note.letter) - NOTE_LETTERS.indexOf(reference.letter);
@@ -487,30 +528,8 @@ function createClefSymbol(staffKey, config) {
   return text;
 }
 
-function createNote(id, staff) {
-  const { letter, octave } = parseNoteId(id);
-  return {
-    id,
-    staff,
-    letter,
-    octave,
-    note: { letter, octave },
-  };
-}
-
 function fullNoteName(note) {
   return `${note.letter}${note.octave}`;
-}
-
-function parseNoteId(id) {
-  const match = /^([A-G])([0-9])$/.exec(id);
-  if (!match) {
-    throw new Error(`Invalid note identifier: ${id}`);
-  }
-  return {
-    letter: match[1],
-    octave: Number(match[2]),
-  };
 }
 
 function createPitch(letter, octave) {

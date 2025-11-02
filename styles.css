@@ -3,6 +3,12 @@
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background-color: #f4f6fb;
   color: #1f2933;
+  --page-horizontal-spacing: clamp(1rem, 3vw, 1.75rem);
+  --page-vertical-spacing: clamp(1.25rem, 5vh, 2.5rem);
+  --column-gap: clamp(1.5rem, 5vw, 3rem);
+  --section-gap: clamp(1rem, 4vh, 1.75rem);
+  --card-padding: clamp(1rem, 4vh, 1.5rem);
+  --score-item-min-height: clamp(64px, 10vh, 90px);
 }
 
 *,
@@ -13,37 +19,43 @@
 
 body {
   margin: 0;
+  min-height: 100vh;
 }
 
 .page {
   max-width: 960px;
   margin: 0 auto;
-  padding: 2.5rem 1.5rem 3rem;
+  padding: var(--page-vertical-spacing) var(--page-horizontal-spacing);
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: var(--page-vertical-spacing);
+  min-height: 100vh;
 }
 
 .layout-column {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--section-gap);
 }
 
 .layout-column--right {
   order: 1;
+  flex: 1;
 }
 
 .layout-column--left {
   order: 2;
+  flex: 1;
+  align-self: stretch;
 }
 
 @media (min-width: 960px) {
   .page {
     display: grid;
-    grid-template-columns: minmax(0, 520px) minmax(0, 360px);
-    gap: 2.5rem;
+    grid-template-columns: max-content minmax(280px, 1fr);
+    gap: var(--column-gap);
     align-items: start;
+    align-content: center;
   }
 
   .layout-column--left,
@@ -66,15 +78,23 @@ body {
   .feedback {
     margin: 0;
   }
+
+  .layout-column--left {
+    max-width: 360px;
+  }
+
+  .layout-column--left .staff-card {
+    width: 100%;
+  }
 }
 
 .page-header {
   text-align: center;
-  margin-bottom: 2.5rem;
+  margin: 0;
 }
 
 .page-header h1 {
-  font-size: 2.5rem;
+  font-size: clamp(1.9rem, 3vw, 2.4rem);
   margin: 0 0 0.75rem;
   letter-spacing: -0.02em;
 }
@@ -83,27 +103,27 @@ body {
   margin: 0 auto;
   max-width: 48ch;
   line-height: 1.6;
-  font-size: 1.05rem;
+  font-size: clamp(0.95rem, 1.3vw, 1.05rem);
   color: #475466;
 }
 
 .scoreboard {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: clamp(0.75rem, 2vw, 1rem);
+  margin: 0;
 }
 
 .score-item {
   background: #ffffff;
   border-radius: 14px;
-  padding: 1rem 1.25rem;
+  padding: clamp(0.75rem, 2vh, 1rem) clamp(0.9rem, 2.5vw, 1.25rem);
   box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 90px;
+  min-height: var(--score-item-min-height);
 }
 
 .score-label {
@@ -115,15 +135,16 @@ body {
 }
 
 .score-value {
-  font-size: 1.8rem;
+  font-size: clamp(1.35rem, 2.5vw, 1.7rem);
   font-weight: 700;
 }
 
 .instructions {
-  margin: 0 0 2rem;
+  margin: 0;
   text-align: center;
   color: #3c4858;
   line-height: 1.5;
+  font-size: clamp(0.95rem, 1.2vw, 1.05rem);
 }
 
 .inline-button {
@@ -152,22 +173,29 @@ body {
 .staff-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--section-gap);
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .staff-card {
   background: linear-gradient(180deg, #ffffff 0%, #f8f9fe 100%);
   border-radius: 18px;
-  padding: 1.5rem 1.5rem 1.75rem;
+  padding: var(--card-padding);
   position: relative;
   box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
   transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
   border: 2px solid transparent;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.75rem, 2vh, 1rem);
+  align-items: flex-start;
+  max-width: 100%;
 }
 
 .staff-card h2 {
-  margin: 0 0 1rem;
-  font-size: 1.2rem;
+  margin: 0;
+  font-size: clamp(1rem, 1.4vw, 1.2rem);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: #4b5d75;
@@ -181,7 +209,7 @@ body {
 
 .staff-svg {
   display: block;
-  width: 100%;
+  width: clamp(280px, 33vw, 320px);
   height: auto;
 }
 
@@ -215,22 +243,22 @@ body {
 
 .answer-panel {
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin: 0;
 }
 
 .answer-buttons {
   display: inline-grid;
   grid-template-columns: repeat(7, minmax(44px, 1fr));
-  gap: 0.75rem;
-  padding: 1rem 1.5rem;
+  gap: clamp(0.5rem, 1.5vw, 0.75rem);
+  padding: clamp(0.75rem, 2vh, 1rem) clamp(1rem, 3vw, 1.5rem);
   background: #ffffff;
   border-radius: 16px;
   box-shadow: 0 10px 20px rgba(15, 23, 42, 0.1);
 }
 
 .answer-button {
-  padding: 0.8rem 0.5rem;
-  font-size: 1.2rem;
+  padding: clamp(0.65rem, 2vh, 0.85rem) 0.5rem;
+  font-size: clamp(1.05rem, 1.8vw, 1.2rem);
   font-weight: 600;
   border-radius: 12px;
   border: 1.5px solid #d1d7e2;
@@ -267,8 +295,8 @@ body {
   margin: 0 auto;
   max-width: 46ch;
   text-align: center;
-  font-size: 1.1rem;
-  padding: 1rem 1.25rem;
+  font-size: clamp(1rem, 1.5vw, 1.1rem);
+  padding: clamp(0.75rem, 2vh, 1rem) clamp(1rem, 2.5vw, 1.25rem);
   border-radius: 14px;
   background: #ffffff;
   box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);

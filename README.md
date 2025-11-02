@@ -36,4 +36,4 @@ No build step is required—everything runs client-side from the HTML, CSS, and 
 
 ## License
 
-This project does not currently include a license. If you plan to publish or reuse it, consider adding one (e.g., MIT) that matches your intentions.***
+MIT License. See `LICENSE` for details.

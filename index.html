@@ -8,65 +8,69 @@
   </head>
   <body>
     <main class="page">
-      <header class="page-header">
-        <h1>Music Notes Guessr</h1>
-        <p>
-          Train your note recognition across treble and bass staves. Watch the
-          highlighted note and name it using your keyboard or the on-screen
-          buttons.
+      <div class="layout-column layout-column--left">
+        <section class="staff-wrapper">
+          <article class="staff-card" data-staff="treble">
+            <h2>Treble Staff</h2>
+            <svg id="trebleStaff" class="staff-svg" role="img" aria-label="Treble staff"></svg>
+          </article>
+          <article class="staff-card" data-staff="bass">
+            <h2>Bass Staff</h2>
+            <svg id="bassStaff" class="staff-svg" role="img" aria-label="Bass staff"></svg>
+          </article>
+        </section>
+      </div>
+
+      <div class="layout-column layout-column--right">
+        <header class="page-header">
+          <h1>Music Notes Guessr</h1>
+          <p>
+            Train your note recognition across treble and bass staves. Watch the
+            highlighted note and name it using your keyboard or the on-screen
+            buttons.
+          </p>
+        </header>
+
+        <section class="scoreboard" aria-label="Scoreboard">
+          <div class="score-item">
+            <span class="score-label">Correct</span>
+            <span id="scoreCorrect" class="score-value">0</span>
+          </div>
+          <div class="score-item">
+            <span class="score-label">Attempts</span>
+            <span id="scoreTotal" class="score-value">0</span>
+          </div>
+          <div class="score-item">
+            <span class="score-label">Accuracy</span>
+            <span id="scoreAccuracy" class="score-value">N/A</span>
+          </div>
+          <div class="score-item">
+            <span class="score-label">Guesses/min</span>
+            <span id="scoreGuessesPerMinute" class="score-value">0.0</span>
+          </div>
+          <div class="score-item">
+            <span class="score-label">Streak</span>
+            <span id="scoreStreak" class="score-value">0</span>
+          </div>
+        </section>
+
+        <p class="instructions">
+          Press the letter keys <strong>A-G</strong> or tap a button to answer. Use
+          <button id="nextButton" type="button" class="inline-button">
+            New note
+          </button>
+          if you want to skip ahead.
         </p>
-      </header>
 
-      <section class="scoreboard" aria-label="Scoreboard">
-        <div class="score-item">
-          <span class="score-label">Correct</span>
-          <span id="scoreCorrect" class="score-value">0</span>
-        </div>
-        <div class="score-item">
-          <span class="score-label">Attempts</span>
-          <span id="scoreTotal" class="score-value">0</span>
-        </div>
-        <div class="score-item">
-          <span class="score-label">Accuracy</span>
-          <span id="scoreAccuracy" class="score-value">N/A</span>
-        </div>
-        <div class="score-item">
-          <span class="score-label">Guesses/min</span>
-          <span id="scoreGuessesPerMinute" class="score-value">0.0</span>
-        </div>
-        <div class="score-item">
-          <span class="score-label">Streak</span>
-          <span id="scoreStreak" class="score-value">0</span>
-        </div>
-      </section>
+        <section class="answer-panel" aria-label="Answer choices">
+          <h2 class="visually-hidden">Answer choices</h2>
+          <div id="answerButtons" class="answer-buttons"></div>
+        </section>
 
-      <p class="instructions">
-        Press the letter keys <strong>A-G</strong> or tap a button to answer. Use
-        <button id="nextButton" type="button" class="inline-button">
-          New note
-        </button>
-        if you want to skip ahead.
-      </p>
-
-      <section class="staff-wrapper">
-        <article class="staff-card" data-staff="treble">
-          <h2>Treble Staff</h2>
-          <svg id="trebleStaff" class="staff-svg" role="img" aria-label="Treble staff"></svg>
-        </article>
-        <article class="staff-card" data-staff="bass">
-          <h2>Bass Staff</h2>
-          <svg id="bassStaff" class="staff-svg" role="img" aria-label="Bass staff"></svg>
-        </article>
-      </section>
-
-      <section class="answer-panel" aria-label="Answer choices">
-        <h2 class="visually-hidden">Answer choices</h2>
-        <div id="answerButtons" class="answer-buttons"></div>
-      </section>
-
-      <p id="feedback" class="feedback" aria-live="polite" role="status">
-        Ready when you are - what note is shown?
-      </p>
+        <p id="feedback" class="feedback" aria-live="polite" role="status">
+          Ready when you are - what note is shown?
+        </p>
+      </div>
     </main>
 
     <script src="app.js" defer></script>

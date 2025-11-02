@@ -19,6 +19,53 @@ body {
   max-width: 960px;
   margin: 0 auto;
   padding: 2.5rem 1.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.layout-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.layout-column--right {
+  order: 1;
+}
+
+.layout-column--left {
+  order: 2;
+}
+
+@media (min-width: 960px) {
+  .page {
+    display: grid;
+    grid-template-columns: minmax(0, 520px) minmax(0, 360px);
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .layout-column--left,
+  .layout-column--right {
+    order: initial;
+  }
+
+  .layout-column--right > * {
+    margin-bottom: 0;
+  }
+
+  .page-header,
+  .instructions,
+  .answer-panel,
+  .feedback {
+    text-align: left;
+  }
+
+  .page-header p,
+  .feedback {
+    margin: 0;
+  }
 }
 
 .page-header {
@@ -103,15 +150,9 @@ body {
 }
 
 .staff-wrapper {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-@media (min-width: 720px) {
-  .staff-wrapper {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 .staff-card {

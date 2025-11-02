@@ -144,6 +144,15 @@ body {
   height: auto;
 }
 
+.clef {
+  fill: #1f2933;
+  font-family: "Noto Music", "Bravura", "Petaluma", "Times New Roman", "Segoe UI Symbol", serif;
+}
+
+.clef-treble {
+  letter-spacing: -0.08em;
+}
+
 .staff-line {
   stroke: #1f2933;
   stroke-width: 1.5;

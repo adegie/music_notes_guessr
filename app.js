@@ -68,6 +68,21 @@ const NOTE_BANK = [
   ...BASS_NOTES.map((id) => createNote(id, "bass")),
 ];
 
+const CLEF_SYMBOLS = {
+  treble: {
+    glyph: String.fromCodePoint(0x1d11e),
+    fontSize: 88,
+    xOffset: -18,
+    yOffsetLines: 2,
+  },
+  bass: {
+    glyph: String.fromCodePoint(0x1d122),
+    fontSize: 72,
+    xOffset: -14,
+    yOffsetLines: 3,
+  },
+};
+
 const staffState = {};
 const staffCards = {};
 const buttonMap = new Map();
@@ -138,6 +153,11 @@ function setupStaffSvgs() {
     }
     svg.appendChild(linesGroup);
 
+    const clefSymbol = createClefSymbol(key, config);
+    if (clefSymbol) {
+      svg.appendChild(clefSymbol);
+    }
+
     const ledgerGroup = document.createElementNS(SVG_NS, "g");
     ledgerGroup.setAttribute("class", "ledger-lines");
     svg.appendChild(ledgerGroup);
@@ -159,6 +179,7 @@ function setupStaffSvgs() {
       ledgerGroup,
       noteGroup,
       noteHead,
+      clefSymbol,
     };
   });
 }
@@ -417,6 +438,26 @@ function clearLedgerLines(group) {
   while (group.firstChild) {
     group.removeChild(group.firstChild);
   }
+}
+
+function createClefSymbol(staffKey, config) {
+  const clef = CLEF_SYMBOLS[staffKey];
+  if (!clef) {
+    return null;
+  }
+
+  const text = document.createElementNS(SVG_NS, "text");
+  text.setAttribute("class", `clef clef-${staffKey}`);
+  text.setAttribute("x", config.paddingX + clef.xOffset);
+  const y =
+    config.baseLineY - clef.yOffsetLines * config.lineSpacing + config.stepSpacing;
+  text.setAttribute("y", y);
+  text.setAttribute("font-size", clef.fontSize);
+  text.setAttribute("text-anchor", "middle");
+  text.setAttribute("dominant-baseline", "middle");
+  text.textContent = clef.glyph;
+
+  return text;
 }
 
 function createNote(id, staff) {

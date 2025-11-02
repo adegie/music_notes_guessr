@@ -73,13 +73,13 @@ const CLEF_SYMBOLS = {
     glyph: String.fromCodePoint(0x1d11e),
     fontSize: 88,
     xOffset: -18,
-    yOffsetLines: 2,
+    yAdjust: -2,
   },
   bass: {
     glyph: String.fromCodePoint(0x1d122),
     fontSize: 72,
     xOffset: -14,
-    yOffsetLines: 3,
+    yAdjust: 1,
   },
 };
 
@@ -449,8 +449,8 @@ function createClefSymbol(staffKey, config) {
   const text = document.createElementNS(SVG_NS, "text");
   text.setAttribute("class", `clef clef-${staffKey}`);
   text.setAttribute("x", config.paddingX + clef.xOffset);
-  const y =
-    config.baseLineY - clef.yOffsetLines * config.lineSpacing + config.stepSpacing;
+  const staffCenterY = config.baseLineY - 2 * config.lineSpacing;
+  const y = staffCenterY + (clef.yAdjust || 0);
   text.setAttribute("y", y);
   text.setAttribute("font-size", clef.fontSize);
   text.setAttribute("text-anchor", "middle");

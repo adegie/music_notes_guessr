@@ -1,5 +1,8 @@
 const SVG_NS = "http://www.w3.org/2000/svg";
 const NOTE_LETTERS = ["C", "D", "E", "F", "G", "A", "B"];
+const KEY_ALIASES = {
+  H: "B",
+};
 const VALID_KEYS = new Set(NOTE_LETTERS);
 
 const STAFF_CONFIG = {
@@ -233,7 +236,8 @@ function handleKeydown(event) {
     return;
   }
 
-  const letter = event.key.toUpperCase();
+  const rawLetter = event.key.toUpperCase();
+  const letter = KEY_ALIASES[rawLetter] || rawLetter;
   if (!VALID_KEYS.has(letter)) {
     return;
   }

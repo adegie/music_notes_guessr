@@ -242,6 +242,9 @@ function handleSameStaffProbabilityChange(event) {
   const normalized = Math.min(Math.max(value / 100, 0), 1);
   state.sameStaffProbability = normalized;
   updateSameStaffProbabilityDisplay();
+  if (event.target instanceof HTMLElement) {
+    event.target.blur();
+  }
 }
 
 function updateSameStaffProbabilityDisplay() {

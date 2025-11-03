@@ -358,6 +358,7 @@ function pickRandomNote() {
     updateNotePool();
   }
   const previousStaff = state.current ? state.current.staff : null;
+  const previousNote = state.current;
   let pool = state.notePool;
 
   if (
@@ -370,8 +371,7 @@ function pickRandomNote() {
     pool = state.notePoolByStaff[previousStaff];
   }
 
-  const index = Math.floor(Math.random() * pool.length);
-  return pool[index];
+  return selectRandomNote(pool, previousNote);
 }
 
 function buildNotePool(useAdvanced) {
@@ -591,6 +591,30 @@ function fullNoteName(note) {
 
 function createPitch(letter, octave) {
   return { letter, octave };
+}
+
+function selectRandomNote(pool, previousNote) {
+  if (!pool || pool.length === 0) {
+    throw new Error("Note pool is empty");
+  }
+
+  if (!previousNote || pool.length === 1) {
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  const filtered = pool.filter(
+    (candidate) => !isSameNote(candidate, previousNote)
+  );
+
+  const selectionPool = filtered.length > 0 ? filtered : pool;
+  return selectionPool[Math.floor(Math.random() * selectionPool.length)];
+}
+
+function isSameNote(a, b) {
+  if (!a || !b) {
+    return false;
+  }
+  return a.id === b.id && a.staff === b.staff;
 }
 
 document.addEventListener("DOMContentLoaded", init);

@@ -71,7 +71,8 @@ body {
   .instructions,
   .answer-panel,
   .feedback,
-  .mode-toggle {
+  .mode-toggle,
+  .mode-control {
     text-align: left;
   }
 
@@ -90,6 +91,14 @@ body {
 
   .mode-toggle {
     align-items: flex-start;
+  }
+
+  .mode-control {
+    align-items: flex-start;
+  }
+
+  .mode-control__input {
+    max-width: none;
   }
 }
 
@@ -162,6 +171,16 @@ body {
   text-align: center;
 }
 
+.mode-control {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: clamp(0.9rem, 1.1vw, 1rem);
+  color: #3c4858;
+  text-align: center;
+}
+
 .mode-toggle__label {
   display: inline-flex;
   align-items: center;
@@ -176,7 +195,35 @@ body {
   accent-color: #4e6aff;
 }
 
+.mode-control__label {
+  font-weight: 600;
+}
+
+.mode-control__input {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 280px;
+}
+
+.mode-control__input input[type="range"] {
+  flex: 1;
+  accent-color: #4e6aff;
+}
+
+.mode-control__input output {
+  min-width: 3.5ch;
+  font-weight: 600;
+}
+
 .mode-toggle__hint {
+  margin: 0;
+  font-size: clamp(0.8rem, 1vw, 0.85rem);
+  color: #5b6779;
+}
+
+.mode-control__hint {
   margin: 0;
   font-size: clamp(0.8rem, 1vw, 0.85rem);
   color: #5b6779;

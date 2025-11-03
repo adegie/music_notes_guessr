@@ -8,6 +8,7 @@ Music Notes Guessr is a browser-based trainer for sight-reading treble and bass 
 - Keyboard shortcuts: press `A`&ndash;`G` to answer, plus `H` as an alias for `B` to support German note naming.
 - On-screen answer buttons for touch or mouse input.
 - Scoreboard with correctness, attempts, accuracy percentage, guesses per minute, and current streak.
+- Adjustable same-staff probability slider to control how often consecutive notes stay on one staff.
 - Optional **Advanced mode** toggle that expands the note pool up to three ledger lines above and below each staff.
 - New note button to skip ahead at any time.
 
@@ -17,6 +18,7 @@ Music Notes Guessr is a browser-based trainer for sight-reading treble and bass 
 2. Watch the highlighted note on the treble or bass staff.
 3. Respond with the matching letter key or tap the button on screen. Press the **New note** button to skip.
 4. Enable the **Advanced mode** checkbox to include ledger line notes (three bars above/below each staff).
+5. Fine-tune the “Same staff chance” slider to adjust how often consecutive notes remain on the same staff.
 
 No build step is required—everything runs client-side from the HTML, CSS, and JS files in the repository.
 

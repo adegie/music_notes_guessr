@@ -73,7 +73,9 @@ const state = {
   sessionStart: null,
   scoreboardInterval: null,
   advancedMode: false,
+  sameStaffProbability: 0.7,
   notePool: [],
+  notePoolByStaff: {},
 };
 
 const elements = {};
@@ -109,6 +111,12 @@ function cacheElements() {
   if (elements.advancedToggle) {
     elements.advancedToggle.checked = state.advancedMode;
   }
+  elements.sameStaffProbabilitySlider =
+    document.getElementById("sameStaffProbability");
+  elements.sameStaffProbabilityValue = document.getElementById(
+    "sameStaffProbabilityValue"
+  );
+  updateSameStaffProbabilityDisplay();
 }
 
 function setupStaffCards() {
@@ -201,6 +209,12 @@ function bindEvents() {
   if (elements.advancedToggle) {
     elements.advancedToggle.addEventListener("change", handleAdvancedToggle);
   }
+  if (elements.sameStaffProbabilitySlider) {
+    elements.sameStaffProbabilitySlider.addEventListener(
+      "input",
+      handleSameStaffProbabilityChange
+    );
+  }
 }
 
 function handleAdvancedToggle(event) {
@@ -212,7 +226,29 @@ function handleAdvancedToggle(event) {
 }
 
 function updateNotePool() {
-  state.notePool = buildNotePool(state.advancedMode);
+  const { all, byStaff } = buildNotePool(state.advancedMode);
+  state.notePool = all;
+  state.notePoolByStaff = byStaff;
+}
+
+function handleSameStaffProbabilityChange(event) {
+  const value = Number(event.target.value);
+  if (Number.isNaN(value)) {
+    return;
+  }
+  const normalized = Math.min(Math.max(value / 100, 0), 1);
+  state.sameStaffProbability = normalized;
+  updateSameStaffProbabilityDisplay();
+}
+
+function updateSameStaffProbabilityDisplay() {
+  const percent = Math.round(state.sameStaffProbability * 100);
+  if (elements.sameStaffProbabilitySlider) {
+    elements.sameStaffProbabilitySlider.value = String(percent);
+  }
+  if (elements.sameStaffProbabilityValue) {
+    elements.sameStaffProbabilityValue.textContent = `${percent}%`;
+  }
 }
 
 function handleKeydown(event) {
@@ -318,14 +354,28 @@ function pickRandomNote() {
   if (!state.notePool || state.notePool.length === 0) {
     updateNotePool();
   }
-  const index = Math.floor(Math.random() * state.notePool.length);
-  return state.notePool[index];
+  const previousStaff = state.current ? state.current.staff : null;
+  let pool = state.notePool;
+
+  if (
+    previousStaff &&
+    state.notePoolByStaff &&
+    state.notePoolByStaff[previousStaff] &&
+    state.notePoolByStaff[previousStaff].length > 0 &&
+    Math.random() < state.sameStaffProbability
+  ) {
+    pool = state.notePoolByStaff[previousStaff];
+  }
+
+  const index = Math.floor(Math.random() * pool.length);
+  return pool[index];
 }
 
 function buildNotePool(useAdvanced) {
   const rangeKey = useAdvanced ? "advanced" : "standard";
   const ranges = NOTE_RANGES[rangeKey];
-  const pool = [];
+  const all = [];
+  const byStaff = {};
 
   Object.keys(STAFF_CONFIG).forEach((staffKey) => {
     const staffConfig = STAFF_CONFIG[staffKey];
@@ -334,19 +384,23 @@ function buildNotePool(useAdvanced) {
       return;
     }
 
+    const staffNotes = [];
     for (let step = staffRange.min; step <= staffRange.max; step += 1) {
       const pitch = shiftPitch(staffConfig.bottomNote, step);
-      pool.push({
+      const noteEntry = {
         id: `${pitch.letter}${pitch.octave}`,
         staff: staffKey,
         letter: pitch.letter,
         octave: pitch.octave,
         note: pitch,
-      });
+      };
+      staffNotes.push(noteEntry);
+      all.push(noteEntry);
     }
+    byStaff[staffKey] = staffNotes;
   });
 
-  return pool;
+  return { all, byStaff };
 }
 
 function updateStaffNote(staffKey, note) {

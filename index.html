@@ -72,6 +72,28 @@
           </p>
         </div>
 
+        <div class="mode-control">
+          <label class="mode-control__label" for="sameStaffProbability">
+            Same staff chance
+          </label>
+          <div class="mode-control__input">
+            <input
+              id="sameStaffProbability"
+              type="range"
+              min="0"
+              max="100"
+              step="5"
+              value="70"
+            />
+            <output id="sameStaffProbabilityValue" for="sameStaffProbability">
+              70%
+            </output>
+          </div>
+          <p class="mode-control__hint">
+            Sets how often consecutive notes stay on the same staff.
+          </p>
+        </div>
+
         <section class="answer-panel" aria-label="Answer choices">
           <h2 class="visually-hidden">Answer choices</h2>
           <div id="answerButtons" class="answer-buttons"></div>

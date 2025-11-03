@@ -223,6 +223,9 @@ function handleAdvancedToggle(event) {
   cancelScheduledQuestion();
   state.allowAnswer = true;
   nextQuestion();
+  if (event.target instanceof HTMLInputElement) {
+    event.target.blur();
+  }
 }
 
 function updateNotePool() {
